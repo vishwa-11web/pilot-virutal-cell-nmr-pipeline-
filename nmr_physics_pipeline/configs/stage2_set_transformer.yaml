@@ -1,0 +1,33 @@
+# Stage 2 — Set Transformer Peak Encoder Configuration
+
+model:
+  name: "PeakSetEncoder"
+  input_dim: 128          # From Stage 1 peak features
+  d_model: 256            # Transformer hidden dimension
+  n_heads: 8              # Attention heads
+  n_layers: 4             # Number of ISAB layers
+  n_inducing: 32          # Inducing points for O(nm) attention
+  dropout: 0.1
+  use_layer_norm: true
+  
+  # PMA pooling for molecule-level embedding
+  pma:
+    n_seeds: 1            # 1 seed = 1 molecule embedding
+    n_heads: 4
+
+  # Masked peak prediction (pre-training)
+  mask_ratio: 0.15        # Fraction of peaks to mask (like BERT)
+  
+data:
+  max_peaks: 200
+  peak_feature_dim: 128
+  
+training:
+  batch_size: 16
+  learning_rate: 5.0e-4
+  weight_decay: 1.0e-4
+  max_epochs: 200
+  warmup_epochs: 10
+  lambda_masked: 1.0      # Masked peak prediction loss
+  gradient_clip: 1.0
+  num_workers: 2

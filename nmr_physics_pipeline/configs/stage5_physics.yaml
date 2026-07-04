@@ -1,0 +1,100 @@
+# Stage 5 — Shared Latent Molecular State + Physics Heads
+
+model:
+  name: "MolecularStatePhysics"
+  d_model: 512
+  d_residue: 256            # Per-residue embedding dim
+  
+  # Observable encoders
+  shift_encoder:
+    input_dim: 4             # H, N, CA, CB
+    hidden_dim: 128
+    output_dim: 256
+  
+  coupling_encoder:
+    input_dim: 2             # J_HNHa, J_HaC
+    hidden_dim: 64
+    output_dim: 256
+  
+  noe_encoder:
+    type: "graph_attention"
+    hidden_dim: 128
+    output_dim: 256
+    n_heads: 4
+    n_layers: 2
+  
+  relaxation_encoder:
+    input_dim: 3             # R1, R2, hetNOE
+    hidden_channels: [64, 128]
+    kernel_size: 3
+    output_dim: 256
+  
+  cest_encoder:
+    input_channels: 4        # Number of B1 fields
+    hidden_channels: [32, 64, 128]
+    kernel_size: 5
+    output_dim: 256
+  
+  structure_encoder:
+    type: "schnet"
+    hidden_dim: 128
+    n_interactions: 3
+    cutoff: 10.0             # Å
+    n_gaussians: 50
+    output_dim: 256
+  
+  # Cross-observable fusion
+  fusion_transformer:
+    n_layers: 8
+    n_heads: 8
+    d_ff: 2048
+    dropout: 0.1
+  
+  # Variational bottleneck
+  variational:
+    enabled: true
+    latent_dim: 256
+    kl_weight: 0.001
+  
+  # Physics heads
+  thermodynamics_head:
+    hidden_dims: [512, 256, 128]
+    output_dim: 3            # ΔH, ΔS, Cp
+    temperature: 298.15      # Default temperature (K)
+  
+  kinetics_head:
+    hidden_dims: [512, 256, 128]
+    output_dim: 4            # log(kex), pb, ΔH‡, ΔS‡
+    
+  forces_head:
+    hidden_dims: [256, 128]
+    lmax: 2                  # Max spherical harmonic degree
+    n_features: 64           # Equivariant features
+    
+  chemistry_head:
+    hidden_dims: [256, 128, 64]
+    output_dim: 3            # pKa, electrophilicity, nucleophilicity
+
+data:
+  max_seq_len: 150
+  max_peaks: 200
+  n_cest_offsets: 201
+  
+training:
+  batch_size: 4
+  learning_rate: 1.0e-4
+  weight_decay: 1.0e-5
+  max_epochs: 500
+  warmup_epochs: 20
+  
+  # Physics loss weights
+  lambda_thermo: 1.0
+  lambda_kinetics: 1.0
+  lambda_forces: 0.5
+  lambda_chemistry: 0.5
+  lambda_physics_consistency: 2.0  # Cross-head consistency
+  lambda_spectral_backpred: 0.3    # Spectrum reconstruction
+  lambda_kl: 0.001                 # VAE KL divergence
+  
+  gradient_clip: 0.5
+  num_workers: 2

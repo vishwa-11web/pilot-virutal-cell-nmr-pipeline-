@@ -1,0 +1,45 @@
+# Stage 4 — Iterative NOESY Assignment + Structure Feedback
+
+model:
+  name: "NOESYStructureRefiner"
+  d_model: 256
+  
+  # Iterative refinement
+  n_iterations: 5           # Number of assignment-structure cycles
+  
+  # NOESY assignment scoring
+  assignment_scorer:
+    shift_tolerance: 0.03   # Chemical shift matching tolerance (ppm)
+    distance_weight: 1.0    # Weight for distance compatibility
+    network_weight: 0.3     # Weight for network anchoring
+  
+  # Structure refinement
+  structure_optimizer:
+    lr: 0.01                # Learning rate for coordinate optimization
+    n_steps: 50             # Gradient steps per iteration
+    noe_force_constant: 10.0
+    bond_force_constant: 100.0
+    angle_force_constant: 50.0
+    clash_radius: 2.0       # Minimum inter-atomic distance (Å)
+    clash_penalty: 100.0
+  
+  # Ramachandran prior
+  rama_prior:
+    weight: 0.5
+    
+data:
+  max_seq_len: 150
+  max_noe_peaks: 1000
+  distance_cutoff: 6.0      # Å
+  
+training:
+  batch_size: 4              # Smaller due to iterative refinement
+  learning_rate: 1.0e-4
+  weight_decay: 1.0e-4
+  max_epochs: 200
+  warmup_epochs: 10
+  lambda_noe: 1.0
+  lambda_structure: 0.5
+  lambda_shift_backpred: 0.3
+  gradient_clip: 0.5
+  num_workers: 2

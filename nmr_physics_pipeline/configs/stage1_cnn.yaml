@@ -1,0 +1,49 @@
+# Stage 1 — Per-Spectrum CNN Encoder Configuration
+# Optimized for Colab free tier (CPU/T4 GPU)
+
+model:
+  name: "SpectrumCNNEncoder"
+  # Multi-scale CNN branches
+  branches:
+    - kernel_size: 3   # Local peak features
+      channels: [32, 64, 128, 256]
+    - kernel_size: 7   # Lineshape features
+      channels: [32, 64, 128, 256]
+    - kernel_size: 15  # Baseline/artifact features
+      channels: [16, 32, 64, 128]
+  
+  # Peak detection head
+  peak_head:
+    n_classes: 1        # Binary: peak vs. background
+    nms_kernel: 3       # NMS neighborhood size
+    score_threshold: 0.3
+  
+  # Peak feature extractor
+  feature_extractor:
+    patch_size: 16      # Local patch around each peak
+    feature_dim: 128    # Output feature vector dimension
+    hidden_dim: 256     # MLP hidden dimension
+  
+  dropout: 0.1
+
+data:
+  grid_size: [256, 512]  # [F1=15N, F2=1H]
+  max_peaks: 200
+  noise_level: 0.02
+  
+training:
+  batch_size: 8          # Small for Colab free tier
+  learning_rate: 1.0e-3
+  weight_decay: 1.0e-4
+  max_epochs: 100
+  warmup_epochs: 5
+  focal_loss_gamma: 2.0  # Focal loss for peak detection
+  focal_loss_alpha: 0.25
+  lambda_detection: 1.0  # Loss weight: peak detection
+  lambda_properties: 0.5 # Loss weight: peak property regression
+  gradient_clip: 1.0
+  
+  # Colab-specific
+  num_workers: 2
+  pin_memory: false      # CPU mode
+  mixed_precision: false  # No AMP on CPU

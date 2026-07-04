@@ -1,0 +1,6 @@
+pyproject.toml
+nmr_physics_pipeline.egg-info/PKG-INFO
+nmr_physics_pipeline.egg-info/SOURCES.txt
+nmr_physics_pipeline.egg-info/dependency_links.txt
+nmr_physics_pipeline.egg-info/requires.txt
+nmr_physics_pipeline.egg-info/top_level.txt

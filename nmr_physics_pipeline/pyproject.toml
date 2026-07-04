@@ -1,0 +1,75 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "nmr-physics-pipeline"
+version = "0.1.0"
+description = "NMR-to-Physics AI/ML Pipeline: from raw spectra to thermodynamics, kinetics, forces, and chemistry"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "NMR Physics Research"},
+]
+
+dependencies = [
+    # Core
+    "torch>=2.1",
+    "numpy>=1.24",
+    "scipy>=1.11",
+    "pandas>=2.0",
+
+    # NMR data handling
+    "nmrglue>=0.9",
+    "pynmrstar>=3.3",
+
+    # ML components
+    "e3nn>=0.5",
+    "torch-scatter>=2.1",
+
+    # Configuration
+    "pyyaml>=6.0",
+    "omegaconf>=2.3",
+
+    # HTTP / API
+    "requests>=2.31",
+    "aiohttp>=3.9",
+
+    # Visualization
+    "matplotlib>=3.8",
+    "plotly>=5.18",
+
+    # Logging
+    "tensorboard>=2.15",
+    "tqdm>=4.66",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "black>=23.0",
+    "ruff>=0.1",
+]
+colab = [
+    # Lighter dependencies for Colab free tier
+    "py3Dmol>=2.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["nmr_physics_pipeline*", "data*", "models*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"

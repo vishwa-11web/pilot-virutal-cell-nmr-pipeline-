@@ -1,0 +1,46 @@
+# Stage 3 — Sequence-Conditioned Assignment Configuration
+
+model:
+  name: "SequenceAssignmentNetwork"
+  d_model: 256
+  
+  # Sequence encoder
+  sequence_encoder:
+    vocab_size: 24         # 20 AA + pad/cls/eos/unk
+    n_layers: 6
+    n_heads: 8
+    d_ff: 1024             # Feedforward hidden dim
+    dropout: 0.1
+    max_seq_len: 200
+    use_sinusoidal_pe: true
+  
+  # Cross-attention assignment
+  cross_attention:
+    n_layers: 3
+    n_heads: 8
+    dropout: 0.1
+  
+  # Sinkhorn normalization for assignment matrix
+  sinkhorn:
+    n_iterations: 10
+    temperature: 0.1       # Softmax temperature
+  
+  # Amino acid shift prior strength
+  aa_prior_weight: 0.3
+
+data:
+  max_seq_len: 200
+  max_peaks: 300
+  nuclei: ["H", "N", "CA", "CB"]
+  
+training:
+  batch_size: 16
+  learning_rate: 3.0e-4
+  weight_decay: 1.0e-4
+  max_epochs: 300
+  warmup_epochs: 15
+  lambda_assignment: 1.0
+  lambda_sequential: 0.3   # Sequential Cα consistency
+  lambda_aa_prior: 0.2     # Amino acid type KL divergence
+  gradient_clip: 1.0
+  num_workers: 2

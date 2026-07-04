@@ -1,0 +1,31 @@
+Metadata-Version: 2.4
+Name: nmr-physics-pipeline
+Version: 0.1.0
+Summary: NMR-to-Physics AI/ML Pipeline: from raw spectra to thermodynamics, kinetics, forces, and chemistry
+Author: NMR Physics Research
+License: MIT
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: torch>=2.1
+Requires-Dist: numpy>=1.24
+Requires-Dist: scipy>=1.11
+Requires-Dist: pandas>=2.0
+Requires-Dist: nmrglue>=0.9
+Requires-Dist: pynmrstar>=3.3
+Requires-Dist: e3nn>=0.5
+Requires-Dist: torch-scatter>=2.1
+Requires-Dist: pyyaml>=6.0
+Requires-Dist: omegaconf>=2.3
+Requires-Dist: requests>=2.31
+Requires-Dist: aiohttp>=3.9
+Requires-Dist: matplotlib>=3.8
+Requires-Dist: plotly>=5.18
+Requires-Dist: tensorboard>=2.15
+Requires-Dist: tqdm>=4.66
+Provides-Extra: dev
+Requires-Dist: pytest>=7.4; extra == "dev"
+Requires-Dist: pytest-cov>=4.1; extra == "dev"
+Requires-Dist: black>=23.0; extra == "dev"
+Requires-Dist: ruff>=0.1; extra == "dev"
+Provides-Extra: colab
+Requires-Dist: py3Dmol>=2.0; extra == "colab"
